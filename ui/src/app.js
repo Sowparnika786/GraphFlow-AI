@@ -311,39 +311,53 @@ function appendBotMessage(data) {
   msgDiv.className = 'chat-message bot-message';
   
   const groundedBadge = data.grounded 
-    ? `<span class="badge-success">✓ Grounded in Dataset</span>`
-    : `<span class="badge-warning">🛡️ Anti-Hallucination Safeguard (Not in Dataset)</span>`;
+    ? `<span class="badge-success">✓ Grounded in Neo4j</span>`
+    : `<span class="badge-danger">✕ Grounded: False (Not in Dataset)</span>`;
 
+  let evidenceStatements = '';
+  if (data.result && data.result.length > 0 && typeof data.result[0] === 'object') {
+    const items = data.result.slice(0, 5).map(item => {
+      const obj = item.row || item.r || item;
+      if (typeof obj !== 'object' || obj === null) return '';
+      const entries = Object.entries(obj)
+        .filter(([k]) => k !== 'dataset_id' && k !== 'row_index' && k !== 'columns')
+        .map(([k, v]) => `<strong>${escapeHtml(k)}:</strong> ${escapeHtml(v)}`);
+      return entries.join(' &nbsp;|&nbsp; ');
+    }).filter(s => s.length > 0);
+
+    if (items.length > 0) {
+      evidenceStatements = `
+        <div class="evidence-statements-box" style="margin-top:10px; background: rgba(255,255,255,0.85); border: 1px solid #e0e7ff; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #374151;">
+          <div style="font-weight: 600; color: #4f46e5; margin-bottom: 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Matched Record Statements</div>
+          <ul style="margin: 0; padding-left: 18px; line-height: 1.6;">
+            ${items.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+  }
 
   let cypherBlock = '';
   if (data.cypher) {
     cypherBlock = `
-      <div class="cypher-box">
-        <div class="code-header">Generated Read-Only Cypher</div>
-        <code>${escapeHtml(data.cypher)}</code>
-      </div>
-    `;
-  }
-
-  let resultBlock = '';
-  if (data.result && data.result.length > 0) {
-    resultBlock = `
-      <div class="result-box">
-        <div class="code-header">Raw Neo4j Evidence Result</div>
-        <pre>${escapeHtml(JSON.stringify(data.result, null, 2))}</pre>
-      </div>
+      <details class="cypher-details" style="margin-top: 10px; font-size: 12px; color: #6b7280;">
+        <summary style="font-weight: 500; color: #6366f1; cursor: pointer; outline: none; user-select: none;">🔍 View Technical Cypher Query</summary>
+        <div class="cypher-box" style="margin-top: 6px; padding: 8px 12px; background: #1e1e2e; color: #a6adc8; border-radius: 6px; font-family: monospace; font-size: 11px; white-space: pre-wrap;">
+          <code>${escapeHtml(data.cypher)}</code>
+        </div>
+      </details>
     `;
   }
 
   msgDiv.innerHTML = `
     <div class="msg-avatar">⚡</div>
     <div class="msg-body">
-      <p>${escapeHtml(data.answer)}</p>
-      <div class="meta-badges" style="margin-top:8px;">
+      <p style="font-size: 15px; font-weight: 500; color: #1e293b; margin: 0 0 6px 0;">${escapeHtml(data.answer)}</p>
+      <div class="meta-badges" style="margin-top:4px;">
         ${groundedBadge}
       </div>
+      ${evidenceStatements}
       ${cypherBlock}
-      ${resultBlock}
     </div>
   `;
   history.appendChild(msgDiv);
