@@ -1,0 +1,9 @@
+CustomerID,CustomerName,City,Country,CreditLimit
+CUST101,Aarav Sharma,Chennai,India,50000
+CUST102,Bhavna Patel,Bangalore,India,75000
+CUST103,Chirag Gupta,Mumbai,India,60000
+CUST104,Deepika Rao,Hyderabad,India,90000
+CUST105,Eshwar Reddy,Chennai,India,45000
+CUST106,Farhan Khan,Delhi,India,80000
+CUST107,Gitanjali Nair,Kochi,India,55000
+CUST108,Hariharan Iyer,Chennai,India,70000

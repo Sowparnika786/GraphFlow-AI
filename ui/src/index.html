@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GraphFlow AI — Grounded Answers Out</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="brand">
+        <div class="logo-badge">
+          <span class="logo-icon">⚡</span>
+        </div>
+        <div>
+          <div class="title-row">
+            <h1>GraphFlow AI</h1>
+            <span class="version-tag">v1.0 Ready</span>
+          </div>
+          <p class="subtitle">Data In. Grounded Answers Out.</p>
+          <div class="pipeline-pills">
+            <span class="pill">CSV</span>
+            <span class="pill-arrow">→</span>
+            <span class="pill">Kafka</span>
+            <span class="pill-arrow">→</span>
+            <span class="pill">Loader</span>
+            <span class="pill-arrow">→</span>
+            <span class="pill">Neo4j</span>
+            <span class="pill-arrow">→</span>
+            <span class="pill highlight">Grounded Chat</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button id="btn-judge-guide" class="btn-guide">
+          <span class="btn-icon">📋</span> Judge Demo Guide
+        </button>
+        <div class="health-indicators">
+          <div class="health-badge" id="health-kafka"><span class="dot"></span> Kafka</div>
+          <div class="health-badge" id="health-neo4j"><span class="dot"></span> Neo4j</div>
+          <div class="health-badge" id="health-api"><span class="dot"></span> API</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Judge Guide Modal -->
+    <section id="judge-guide-panel" class="judge-panel hidden">
+      <div class="judge-panel-header">
+        <div>
+          <h3>🎯 Judge Evaluation Flow & Verification Steps</h3>
+          <p class="panel-subtitle">Follow these 7 steps to verify full pipeline correctness</p>
+        </div>
+        <button id="btn-close-guide" class="btn-close">✕</button>
+      </div>
+      <div class="judge-steps">
+        <div class="step-card">
+          <span class="step-num">1</span>
+          <div class="step-text">
+            <b>Upload Dataset</b>
+            <p>Click quick sample <code>employees.csv</code> or drop your own CSV.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-num">2</span>
+          <div class="step-text">
+            <b>Kafka Streaming</b>
+            <p>1 Kafka message per CSV row produced to topic <code>csv-rows</code>.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-num">3</span>
+          <div class="step-text">
+            <b>Graph Loading</b>
+            <p>Loader worker consumes rows and MERGEs into Neo4j.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-num">4</span>
+          <div class="step-text">
+            <b>Ask Questions</b>
+            <p>Try suggested chips like <i>"How many rows have Department = Sales?"</i></p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-num">5</span>
+          <div class="step-text">
+            <b>Inspect Cypher</b>
+            <p>Expand generated Cypher query and raw Neo4j JSON result.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-num">6</span>
+          <div class="step-text">
+            <b>Verify Grounding</b>
+            <p>Ask <i>"What is Arun's blood group?"</i> → <code>grounded=false</code></p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-num">7</span>
+          <div class="step-text">
+            <b>Idempotency Test</b>
+            <p>Upload exact same CSV twice; zero duplicate nodes are created.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pipeline Visual Stepper -->
+    <section class="stepper-section">
+      <div class="stepper">
+        <div class="step-item" id="step-upload">
+          <div class="step-icon">📤</div>
+          <div class="step-details">
+            <span class="step-name">1. CSV Ingest</span>
+            <span class="step-sub">Multipart Form</span>
+          </div>
+        </div>
+        <div class="step-divider"></div>
+        <div class="step-item" id="step-kafka">
+          <div class="step-icon">⚡</div>
+          <div class="step-details">
+            <span class="step-name">2. Kafka Topic</span>
+            <span class="step-sub">csv-rows</span>
+          </div>
+        </div>
+        <div class="step-divider"></div>
+        <div class="step-item" id="step-loader">
+          <div class="step-icon">⚙️</div>
+          <div class="step-details">
+            <span class="step-name">3. Loader Worker</span>
+            <span class="step-sub">Async Consumer</span>
+          </div>
+        </div>
+        <div class="step-divider"></div>
+        <div class="step-item" id="step-neo4j">
+          <div class="step-icon">🔮</div>
+          <div class="step-details">
+            <span class="step-name">4. Neo4j Graph</span>
+            <span class="step-sub">MERGE Graph</span>
+          </div>
+        </div>
+        <div class="step-divider"></div>
+        <div class="step-item" id="step-chat">
+          <div class="step-icon">💬</div>
+          <div class="step-details">
+            <span class="step-name">5. Grounded Chat</span>
+            <span class="step-sub">Cypher Evidence</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <main class="main-grid">
+      <!-- Left Column: Ingestion & Data Profile -->
+      <div class="col-left">
+        <!-- Upload Card -->
+        <div class="card upload-card">
+          <div class="card-title-bar">
+            <h2>📁 Ingest CSV Dataset</h2>
+            <span class="badge-neutral">Dynamic Schema</span>
+          </div>
+
+          <!-- Quick Load Sample Buttons -->
+          <div class="quick-samples">
+            <span class="quick-title">Quick Demo Samples:</span>
+            <div class="sample-buttons">
+              <button id="btn-sample-employees" class="btn-sample">
+                <span>📄</span> Load Employees (20 rows)
+              </button>
+              <button id="btn-sample-customers" class="btn-sample">
+                <span>📄</span> Load Customers (8 rows)
+              </button>
+            </div>
+          </div>
+          
+          <div id="drop-zone" class="drop-zone">
+            <input type="file" id="file-input" accept=".csv" class="file-input">
+            <div class="drop-zone-content">
+              <div class="upload-circle">
+                <span class="upload-icon">☁️</span>
+              </div>
+              <p class="drop-text"><b>Drop your CSV file here</b> or <span class="browse-link">browse files</span></p>
+              <p class="file-hint">Auto-detects dynamic headers, strings, numbers & IDs</p>
+            </div>
+          </div>
+          
+          <div id="file-details" class="file-details hidden">
+            <div class="file-info">
+              <span class="file-icon font-emoji">📄</span>
+              <div>
+                <span id="file-name" class="file-name">filename.csv</span>
+                <span id="file-size" class="file-size">0 KB</span>
+              </div>
+            </div>
+            <div class="button-group">
+              <button id="btn-upload" class="btn-primary">Upload to Kafka</button>
+              <button id="btn-clear-file" class="btn-text">Clear</button>
+            </div>
+          </div>
+
+          <!-- Progress Section -->
+          <div id="progress-container" class="progress-container hidden">
+            <div class="progress-header">
+              <span id="progress-status-text">Streaming rows via Kafka...</span>
+              <span id="progress-percentage" class="pct-badge">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div id="progress-bar-fill" class="progress-bar-fill"></div>
+            </div>
+            <div class="progress-counts">
+              <span class="count-item">Loaded: <b id="count-loaded">0</b></span>
+              <span class="count-item">Failed: <b id="count-failed">0</b></span>
+              <span class="count-item">Total: <b id="count-total">0</b></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview & Profiling -->
+        <div id="preview-card" class="card preview-card hidden">
+          <div class="card-title-bar">
+            <h2>📊 Dataset Profile & Preview</h2>
+            <span id="badge-dataset-id" class="badge-code">Job ID: -</span>
+          </div>
+
+          <div class="profile-stats">
+            <div class="stat-card">
+              <div class="stat-num" id="stat-rows">0</div>
+              <div class="stat-label">Total Rows</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="stat-cols">0</div>
+              <div class="stat-label">Columns</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="stat-missing">0</div>
+              <div class="stat-label">Missing Cells</div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table id="preview-table">
+              <thead><tr id="preview-thead"></tr></thead>
+              <tbody id="preview-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Grounded Chatbot -->
+      <div class="col-right">
+        <div class="card chat-card">
+          <div class="card-title-bar">
+            <div class="chat-heading">
+              <h2>💬 Ask Your Data</h2>
+              <span class="badge-success"><span class="pulse-dot"></span> Cypher Grounding Active</span>
+            </div>
+          </div>
+
+          <!-- Suggested Question Chips -->
+          <div id="suggestions-container" class="suggestions-container">
+            <span class="suggestions-title">💡 Suggested Grounded Questions:</span>
+            <div id="chips-wrapper" class="chips-wrapper">
+              <button class="chip" data-q="How many rows are there?">How many rows are there?</button>
+              <button class="chip" data-q="What columns are available?">What columns are available?</button>
+              <button class="chip" data-q="Show the first 5 rows.">Show the first 5 rows.</button>
+              <button class="chip" data-q="How many rows have Department = Sales?">Department = Sales</button>
+              <button class="chip" data-q="What is the average Salary?">Average Salary</button>
+              <button class="chip chip-ungrounded" data-q="What is Arun's blood group?">Blood Group (Ungrounded)</button>
+            </div>
+          </div>
+
+          <!-- Chat History -->
+          <div id="chat-history" class="chat-history">
+            <div class="chat-message bot-message welcome-msg">
+              <div class="msg-avatar">⚡</div>
+              <div class="msg-body">
+                <p><b>Welcome to GraphFlow AI!</b></p>
+                <p>Upload a CSV file or click a Quick Sample on the left, then ask plain-English questions. Every answer is grounded with verifiable Cypher queries executed directly on Neo4j.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Input -->
+          <form id="chat-form" class="chat-input-form">
+            <input type="text" id="chat-input" placeholder="Ask something about your dataset..." autocomplete="off">
+            <button type="submit" id="btn-send" class="btn-send">
+              <span>Send</span> ⚡
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

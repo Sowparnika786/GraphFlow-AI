@@ -1,0 +1,5 @@
+Name,Department,Salary,City
+Arun,Sales,25000,Chennai,Extra,Columns,Here
+Priya,Billing
+"Broken Quote without ending
+Kumar,Sales,InvalidEncoding\xFF\xFE
