@@ -685,6 +685,20 @@ th {
   gap: 6px;
 }
 
+.badge-warning {
+  font-size: 11px;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #fde68a;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
 .pulse-dot {
   width: 7px;
   height: 7px;

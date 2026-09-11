@@ -108,7 +108,28 @@ class ChatService:
     def match_intent_and_execute(self, q: str, cols: set) -> Optional[Dict[str, Any]]:
         q_lower = q.lower()
 
+        # 0. Greetings & Help Handler
+        clean_q = re.sub(r'[\?\!\.\,]', '', q_lower).strip()
+        if clean_q in ("hi", "hello", "hey", "greetings", "hi there", "hello there", "good morning", "good afternoon"):
+            col_str = ", ".join(sorted(list(cols))) if cols else "none"
+            return {
+                "answer": f"Hello! I am GraphFlow AI. Ask me any question about your dataset. Available columns: {col_str}.",
+                "cypher": None,
+                "result": [],
+                "grounded": True
+            }
+
+        if clean_q in ("help", "what can i ask", "examples", "how to use", "usage", "questions"):
+            col_str = ", ".join(sorted(list(cols))) if cols else "none"
+            return {
+                "answer": f"Here are sample questions you can ask:\n• 'How many rows are there?'\n• 'What columns are available?'\n• 'Show the first 5 rows'\n• 'What is Arun's city?' (or any entity attribute)\n• 'Show rows where City = Chennai'\n• 'What is the average Salary?'\nAvailable columns: {col_str}.",
+                "cypher": None,
+                "result": [],
+                "grounded": True
+            }
+
         # Explicit unsupported attributes check
+
         for test_field in ["blood group", "blood_group", "ssn", "passport", "salary_tax", "weather", "zipcode"]:
             if test_field in q_lower and not any(test_field in c.lower() for c in cols):
                 return {

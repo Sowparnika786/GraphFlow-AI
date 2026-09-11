@@ -311,8 +311,9 @@ function appendBotMessage(data) {
   msgDiv.className = 'chat-message bot-message';
   
   const groundedBadge = data.grounded 
-    ? `<span class="badge-success">✓ Grounded in Neo4j</span>`
-    : `<span class="badge-danger">✕ Grounded: False (Not in Dataset)</span>`;
+    ? `<span class="badge-success">✓ Grounded in Dataset</span>`
+    : `<span class="badge-warning">🛡️ Anti-Hallucination Safeguard (Not in Dataset)</span>`;
+
 
   let cypherBlock = '';
   if (data.cypher) {
